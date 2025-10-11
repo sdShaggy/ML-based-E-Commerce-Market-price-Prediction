@@ -1,106 +1,128 @@
-# ML Challenge 2025  Readme format
+# ML Challenge 2025 — Smart Product Pricing  
+**Team Name:** Synaptech  
+**Team Members:** Viraj Kumar, Sarvagya Dwivedi, Amon Harsh, Ansh Arya  
+**Submission Date:** 11 October 2025  
 
-## Smart Product Pricing Challenge
+---
 
-In e-commerce, determining the optimal price point for products is crucial for marketplace success and customer satisfaction. Your challenge is to develop an ML solution that analyzes product details and predict the price of the product. The relationship between product attributes and pricing is complex - with factors like brand, specifications, product quantity directly influence pricing. Your task is to build a model that can analyze these product details holistically and suggest an optimal price.
+## 1. Executive Summary
+We developed a **hybrid multimodal model** that integrates **textual** and **visual** features to predict product prices.  
+Our approach combines:
+- **TF–IDF-based textual embeddings** to capture product semantics and numerical cues.  
+- **CNN-based image embeddings (ResNet-50)** to represent visual product characteristics.  
+- A **LightGBM regressor** for final price prediction.
 
-### Data Description:
+This architecture leverages both linguistic and visual modalities, achieving robust performance and interpretability with efficient computation.
 
-The dataset consists of the following columns:
+---
 
-1. **sample_id:** A unique identifier for the input sample
-2. **catalog_content:** Text field containing title, product description and an Item Pack Quantity(IPQ) concatenated.
-3. **image_link:** Public URL where the product image is available for download. 
-   Example link - https://m.media-amazon.com/images/I/71XfHPR36-L.jpg
-   To download images use `download_images` function from `src/utils.py`. See sample code in `src/test.ipynb`.
-4. **price:** Price of the product (Target variable - only available in training data)
+## 2. Methodology Overview
 
-### Dataset Details:
+### 2.1 Problem Analysis
+**Objective:** Predict the product price using catalog text (`catalog_content`) and product image (`image_link`).  
 
-- **Training Dataset:** 75k products with complete product details and prices
-- **Test Set:** 75k products for final evaluation
+**Key Observations:**
+- Textual data contains strong numeric and descriptive signals such as *IPQ, quantity, and model codes*.  
+- Preserving rare tokens (e.g., brand/model IDs) improved model accuracy.  
+- Visual patterns like product type and packaging had measurable impact on price distribution.
 
-### Output Format:
+---
 
-The output file should be a CSV with 2 columns:
+### 2.2 Solution Strategy
+**Approach Type:** Hybrid (Text + Image)  
+**Core Innovation:**  
+We combined TF–IDF-based text representations with deep image embeddings extracted using **ResNet-50**, creating a unified multimodal feature space.  
+A **LightGBM model** trained on this fusion achieved strong generalization across diverse product categories.  
 
-1. **sample_id:** The unique identifier of the data sample. Note the ID should match the test record sample_id.
-2. **price:** A float value representing the predicted price of the product.
+**Evaluation Metric:** SMAPE (Symmetric Mean Absolute Percentage Error)
 
-Note: Make sure to output a prediction for all sample IDs. If you have less/more number of output samples in the output file as compared to test.csv, your output won't be evaluated.
+---
 
-### File Descriptions:
+## 3. Model Architecture
 
-*Source files*
-
-1. **src/utils.py:** Contains helper functions for downloading images from the image_link. You may need to retry a few times to download all images due to possible throttling issues.
-2. **sample_code.py:** Sample dummy code that can generate an output file in the given format. Usage of this file is optional.
-
-*Dataset files*
-
-1. **dataset/train.csv:** Training file with labels (`price`).
-2. **dataset/test.csv:** Test file without output labels (`price`). Generate predictions using your model/solution on this file's data and format the output file to match sample_test_out.csv
-3. **dataset/sample_test.csv:** Sample test input file.
-4. **dataset/sample_test_out.csv:** Sample outputs for sample_test.csv. The output for test.csv must be formatted in the exact same way. Note: The predictions in the file might not be correct
-
-### Constraints:
-
-1. You will be provided with a sample output file. Format your output to match the sample output file exactly. 
-
-2. Predicted prices must be positive float values.
-
-3. Final model should be a MIT/Apache 2.0 License model and up to 8 Billion parameters.
-
-### Evaluation Criteria:
-
-Submissions are evaluated using **Symmetric Mean Absolute Percentage Error (SMAPE)**: A statistical measure that expresses the relative difference between predicted and actual values as a percentage, while treating positive and negative errors equally.
-
-**Formula:**
-```
-SMAPE = (1/n) * Σ |predicted_price - actual_price| / ((|actual_price| + |predicted_price|)/2)
-```
-
-**Example:** If actual price = $100 and predicted price = $120  
-SMAPE = |100-120| / ((|100| + |120|)/2) * 100% = 18.18%
-
-**Note:** SMAPE is bounded between 0% and 200%. Lower values indicate better performance.
-
-### Leaderboard Information:
-
-- **Public Leaderboard:** During the challenge, rankings will be based on 25K samples from the test set to provide real-time feedback on your model's performance.
-- **Final Rankings:** The final decision will be based on performance on the complete 75K test set along with provided documentation of the proposed approach by the teams.
-
-### Submission Requirements:
-
-1. Upload a `test_out.csv` file in the Portal with the exact same formatting as `sample_test_out.csv`
-
-2. All participating teams must also provide a 1-page document describing:
-   - Methodology used
-   - Model architecture/algorithms selected
-   - Feature engineering techniques applied
-   - Any other relevant information about the approach
-   Note: A sample template for this documentation is provided in Documentation_template.md
-
-### **Academic Integrity and Fair Play:**
-
-**⚠️ STRICTLY PROHIBITED: External Price Lookup**
-
-Participants are **STRICTLY NOT ALLOWED** to obtain prices from the internet, external databases, or any sources outside the provided dataset. This includes but is not limited to:
-- Web scraping product prices from e-commerce websites
-- Using APIs to fetch current market prices
-- Manual price lookup from online sources
-- Using any external pricing databases or services
-
-**Enforcement:**
-- All submitted approaches, methodologies, and code pipelines will be thoroughly reviewed and verified
-- Any evidence of external price lookup or data augmentation from internet sources will result in **immediate disqualification**
-
-**Fair Play:** This challenge is designed to test your machine learning and data science skills using only the provided training data. External price lookup defeats the purpose of the challenge.
+### 3.1 Overview
+catalog_content → preprocessing → TF–IDF → text embeddings
+image_link → download → transform → ResNet-50 → image embeddings
+text + image embeddings → concatenation → LightGBM → price prediction
 
 
-### Tips for Success:
+---
 
-- Consider both textual features (catalog_content) and visual features (product images)
-- Explore feature engineering techniques for text and image data
-- Consider ensemble methods combining different model types
-- Pay attention to outliers and data preprocessing
+### 3.2 Model Components
+
+#### 📝 Text Processing Pipeline
+- **Preprocessing:**  
+  - Lowercasing  
+  - Tokenization (retain numbers and hyphens)  
+  - Minimal stopword removal  
+  - URL and unwanted numeric removal  
+
+- **Feature Extraction:** TF–IDF vectorizer  
+  - `max_features = 30,000`  
+  - `ngram_range = (1, 2)`  
+
+- **Output:** Dense TF–IDF embeddings  
+
+---
+
+#### 🖼️ Image Processing Pipeline
+- **Preprocessing:**  
+  - Resize → (224 × 224)  
+  - Normalize → Tensor format  
+
+- **Feature Extraction:**  
+  - Backbone: **ResNet-50** (pretrained on ImageNet, fine-tuned for embeddings)  
+  - Output: Image feature vector  
+
+---
+
+#### 🔗 Multimodal Fusion and Prediction
+- **Fusion:** Concatenation of text and image embeddings  
+- **Model:** LightGBM  
+- **Training Objective:** Minimize SMAPE  
+- **Framework:** LightGBM v4.6 (custom handling for early stopping and evaluation logging)
+
+---
+
+## 4. Model Performance
+
+| Metric | Validation Result |
+|:-------:|:----------------:|
+| **SMAPE** | **63.79%** |
+
+The hybrid model showed consistent improvement over unimodal baselines:
+- Text-only TF–IDF: ~68% SMAPE  
+- Image-only CNN embeddings: ~71% SMAPE  
+- Text + Image (Hybrid): **63.79% SMAPE**
+
+---
+
+## 5. Conclusion
+Our **TF–IDF + ResNet-50 + LightGBM** hybrid system successfully captures complementary textual and visual patterns.  
+Key takeaways:
+- **Text preprocessing** and **numeric token retention** are critical for modeling product price semantics.  
+- **Visual embeddings** enhance differentiation for similar text descriptions.  
+- **LightGBM** efficiently models non-linear interactions between modalities.  
+
+Overall, the approach delivers **high accuracy**, **interpretability**, and **computational efficiency** — aligning well with real-world catalog pricing scenarios.
+
+---
+
+## 6. Tech Stack
+| Component | Tool/Library |
+|:-----------|:-------------|
+| Text Processing | Scikit-learn (TF–IDF) |
+| Image Processing | PyTorch (ResNet-50) |
+| Model Fusion | NumPy, Pandas |
+| Regression Model | LightGBM |
+| Evaluation Metric | SMAPE |
+| Environment | Python 3.10 |
+
+---
+
+## 7. Future Work
+- Incorporate transformer-based embeddings (e.g., **BERT**) for richer textual understanding.  
+- Introduce visual attention mechanisms to focus on relevant product regions.  
+- Explore end-to-end multimodal training with joint optimization.
+
+---
