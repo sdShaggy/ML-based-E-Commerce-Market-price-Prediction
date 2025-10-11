@@ -1,0 +1,2 @@
+This folder contains output csv file.
+It also contains all embeddings
