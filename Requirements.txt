@@ -9,3 +9,5 @@ torch
 torchvision
 lightgbm
 pickle
+sentence-transformers
+openai-clip
