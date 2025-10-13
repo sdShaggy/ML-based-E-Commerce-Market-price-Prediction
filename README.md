@@ -47,7 +47,7 @@ The model integrates two embedding generators — sentence-transformers/all-mpne
 
    ```mermaid
 flowchart TD
-    A[catalog_text<br>(Product Description)] --> B[Text Preprocessing<br>(regex, lowercase, punctuation)]
+    A[catalog_text <br> (Product Description)] --> B[Text Preprocessing <br> (regex, lowercase, punctuation)]
     B --> C[SentenceTransformer (MPNet)<br>→ Text Embeddings (768-d)]
     D[image_url<br>(Product Image)] --> E[Image Preprocessing<br>(resize, normalize)]
     E --> F[CLIP (ViT-B/32)<br>→ Image Embeddings (512-d)]
