@@ -46,17 +46,53 @@ Our high-level approach utilizes **multimodal deep learning**, merging **text an
 The model integrates two embedding generators — sentence-transformers/all-mpnet-base-v2 for text and CLIP for images. The resulting embeddings are concatenated and fed into a fully connected neural network for regression.
 
 **Workflow Diagram (Conceptual):**
+        
+        ┌────────────────────┐
+        │   catalog_text     │
+        │                    │
+        └─────────┬──────────┘
+                  │
+                  ▼
+       [Text Preprocessing: regex, lowercasing]
+                  │
+                  ▼
+        ┌────────────────────────────┐
+        │ SentenceTransformer (MPNet)│
+        │ → Text Embeddings (3072-d) │
+        └─────────┬──────────────────┘
+                  │
+                  ▼
+        ┌────────────────────┐
+        │    image_url       │
+        │ (Product Image)    │
+        └─────────┬──────────┘
+                  │
+                  ▼
+     [Image Preprocessing: resize, normalize]
+                  │
+                  ▼
+        ┌───────────────────────────┐
+        │   CLIP (ViT-B/32 Model)   │
+        │ → Image Embeddings (512-d)│
+        └─────────┬─────────────────┘
+                  │
+                  ▼
+       ┌────────────────────────┐
+       │ Concatenate Embeddings │
+       │ (Text + Image = 3584-d)│
+       └─────────┬──────────────┘
+                 │
+                 ▼
+     ┌─────────────────────────────────────┐
+     │   Fully Connected Neural Network    │
+     │    [BN + Dropout + GeLU Layers]     │
+     └─────────────────┬───────────────────┘
+                       │
+                       ▼
+          **Predicted Product Price**
 
- ```mermaid
-flowchart LR
-    A[Catalog Text] --> B[Text Preprocessing]
-    B --> C[MPNet Embeddings]
-    D[Image URL] --> E[Image Preprocessing]
-    E --> F[CLIP Embeddings]
-    C --> G[Concatenate Embeddings 1280d]
-    F --> G
-    G --> H[Fully Connected Network]
-    H --> I[Predicted Price]
+
+---
 
 ### 3.2 Model Components
 
@@ -125,13 +161,12 @@ Our model achieves competitive SMAPE performance through **transformer-based emb
 *(Includes data preprocessing scripts, embedding generation notebooks, PyTorch training modules, and inference pipeline.)*
 
 ### B. Additional Results
-**Drive Link:** https://drive.google.com/drive/folders/1Dz4lepBcRw9dl0A8UJXgMtPwah6xhmev?usp=drive_link
+**Drive Link:** https://drive.google.com/drive/folders/1szLC0-WNQgHgWzqloGofM9Za4SPRWc4l?usp=sharing  
 *(Includes Fold-wise SMAPE trend charts and  Training vs. validation loss curves)*
-
 
 ---
 
-**License:**  
+## **License:**  
 Released under the **MIT License** — free for use, modification, and distribution with proper attribution.
 
 ---
