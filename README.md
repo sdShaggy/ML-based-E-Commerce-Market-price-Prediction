@@ -45,50 +45,16 @@ The model integrates two embedding generators — sentence-transformers/all-mpne
 
 **Workflow Diagram (Conceptual):**
 
-        ┌────────────────────┐
-        │   catalog_text     │
-        │ (Product Description)
-        └─────────┬──────────┘
-                  │
-                  ▼
-       [Text Preprocessing: regex, lowercasing]
-                  │
-                  ▼
-     ┌────────────────────────────┐
-     │ SentenceTransformer (MPNet)│
-     │ → Text Embeddings (768-d)  │
-     └─────────┬──────────────────┘
-                  │
-                  ▼
-        ┌────────────────────┐
-        │    image_url       │
-        │ (Product Image)    │
-        └─────────┬──────────┘
-                  │
-                  ▼
-     [Image Preprocessing: resize, normalize]
-                  │
-                  ▼
-    ┌───────────────────────────┐
-    │   CLIP (ViT-B/32 Model)   │
-    │ → Image Embeddings (512-d)│
-    └─────────┬─────────────────┘
-                  │
-                  ▼
-       ┌────────────────────────┐
-       │ Concatenate Embeddings │
-       │ (Text + Image = 1280-d)│
-       └─────────┬──────────────┘
-                  │
-                  ▼
- ┌─────────────────────────────────────┐
- │   Fully Connected Neural Network    │
- │  [BN + Dropout + ReLU Layers]       │
- └─────────────────┬───────────────────┘
-                   │
-                   ▼
-        💰 **Predicted Product Price**
-
+   ```mermaid
+flowchart TD
+    A[catalog_text<br>(Product Description)] --> B[Text Preprocessing<br>(regex, lowercase, punctuation)]
+    B --> C[SentenceTransformer (MPNet)<br>→ Text Embeddings (768-d)]
+    D[image_url<br>(Product Image)] --> E[Image Preprocessing<br>(resize, normalize)]
+    E --> F[CLIP (ViT-B/32)<br>→ Image Embeddings (512-d)]
+    C --> G[Concatenate Embeddings<br>(Text + Image = 1280-d)]
+    F --> G
+    G --> H[Fully Connected Neural Network<br>(BN + Dropout + ReLU Layers)]
+    H --> I[💰 Predicted Product Price]
 
 ---
 
