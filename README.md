@@ -1,7 +1,9 @@
 # ML Challenge 2025: Smart Product Pricing Solution
 
 **Team Name:** Synaptech 
+
 **Team Members:** Viraj Kumar, Amon Harsh, Ansh Arya, Sarvagya Dwivedi
+
 **Submission Date:** 13/10/25
 
 ---
@@ -125,9 +127,9 @@ Our model achieves competitive SMAPE performance through **transformer-based emb
 *(Includes data preprocessing scripts, embedding generation notebooks, PyTorch training modules, and inference pipeline.)*
 
 ### B. Additional Results
-- Embedding distribution plots for text and images  
-- Fold-wise SMAPE trend charts  
-- Training vs. validation loss curves  
+**Drive Link:** https://drive.google.com/drive/folders/1Dz4lepBcRw9dl0A8UJXgMtPwah6xhmev?usp=drive_link
+*(Includes Fold-wise SMAPE trend charts and  Training vs. validation loss curves)*
+
 
 ---
 
