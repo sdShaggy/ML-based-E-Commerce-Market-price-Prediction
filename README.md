@@ -47,17 +47,16 @@ The model integrates two embedding generators — sentence-transformers/all-mpne
 
 **Workflow Diagram (Conceptual):**
 
-  ```mermaid
-flowchart TD
-    A[Catalog Text - Product Description] --> B[Text Preprocessing: regex, lowercase, punctuation]
-    B --> C[SentenceTransformer MPNet - Text Embeddings 768d]
-    D[Image URL - Product Image] --> E[Image Preprocessing: resize, normalize]
-    E --> F[CLIP ViT-B/32 - Image Embeddings 512d]
-    C --> G[Concatenate Text and Image Embeddings - 1280d]
+ ```mermaid
+flowchart LR
+    A[Catalog Text] --> B[Text Preprocessing]
+    B --> C[MPNet Embeddings]
+    D[Image URL] --> E[Image Preprocessing]
+    E --> F[CLIP Embeddings]
+    C --> G[Concatenate Embeddings 1280d]
     F --> G
-    G --> H[Fully Connected Neural Network - BN Dropout ReLU Layers]
-    H --> I[Predicted Product Price]
----
+    G --> H[Fully Connected Network]
+    H --> I[Predicted Price]
 
 ### 3.2 Model Components
 
