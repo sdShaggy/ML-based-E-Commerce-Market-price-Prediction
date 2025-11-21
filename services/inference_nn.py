@@ -1,33 +1,88 @@
-# Colab cell for inference
-import numpy as np, pandas as pd, torch, os
-from services.model_neural_network import MultiModalRegressor
-from services.pytorch_dataset import EmbeddingDataset
-from torch.utils.data import DataLoader
+import os
+import numpy as np
+import pandas as pd
+import torch
+from torch.utils.data import Dataset, DataLoader
+from Combined_nn_create import MultiModalPricePredictor  # your model file
 
-text_test = 'outputs/text_embs_test.npy'
-img_test  =  'outputs/test_image_embeddings.npy'
-test_df = pd.read_csv('dataset/test.csv')
-ds = EmbeddingDataset(text_test, img_test, indices=None)
-loader = DataLoader(ds, batch_size=256, shuffle=False, num_workers=2)
+#Dataset for test
+class TestDataset(Dataset):
+    def __init__(self, text_embeddings, image_embeddings):
+        self.text_embeddings = torch.tensor(text_embeddings, dtype=torch.float32)
+        self.image_embeddings = torch.tensor(image_embeddings, dtype=torch.float32)
 
-n_splits=5
-preds_sum = None
-for fold in range(n_splits):
-    model = MultiModalRegressor(text_dim=np.load(text_test).shape[1], img_dim=np.load(img_test).shape[1]).cuda()
-    model.load_state_dict(torch.load(f"/models/nn_fold_{fold}.pt"))
-    model.eval()
-    fold_preds = []
-    with torch.no_grad():
-        for t,i,tab in loader:
-            t,i = t.cuda(), i.cuda()
-            out = model(t,i)
-            fold_preds.append(out.cpu().numpy())
-    fold_preds = np.concatenate(fold_preds)
-    if preds_sum is None:
-        preds_sum = fold_preds
-    else:
-        preds_sum += fold_preds
-preds_avg = preds_sum / n_splits
-pred_prices = np.expm1(preds_avg)
-np.save('outputs/nn_test_preds.npy', pred_prices)
-print("Saved nn test preds", pred_prices.shape)
+    def __len__(self):
+        return len(self.text_embeddings)
+
+    def __getitem__(self, idx):
+        return self.text_embeddings[idx], self.image_embeddings[idx]
+
+#Evaluation Function
+def evaluate_models(model_paths, text_embeddings, image_embeddings, batch_size=64, output_path="output.csv"):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    dataset = TestDataset(text_embeddings, image_embeddings)
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+
+    all_fold_preds = []
+
+    for model_path in model_paths:
+        print(f"Loading model weights from {model_path}")
+        model = MultiModalPricePredictor(text_dim=3072, image_dim=512)
+        model.load_state_dict(torch.load(model_path, map_location=device))
+        model.to(device)
+        model.eval()
+
+        fold_preds = []
+
+        with torch.no_grad():
+            for text_emb, image_emb in loader:
+                text_emb, image_emb = text_emb.to(device), image_emb.to(device)
+                outputs = model(text_emb, image_emb)
+                fold_preds.append(outputs.cpu().numpy())
+
+        fold_preds = np.concatenate(fold_preds)
+        all_fold_preds.append(fold_preds)
+        print(f"Finished predictions for model: {model_path}")
+
+    #Ensemble all folds
+    preds = np.mean(np.vstack(all_fold_preds), axis=0)
+    preds = np.expm1(preds)  # reverse log1p transform
+
+
+    preds = np.clip(preds, 0, np.percentile(preds, 99.9))
+
+    #Prepare submission
+    test_df = pd.read_csv("Base_Model/data/test.csv")
+    assert len(test_df) == len(preds), "Test CSV and embeddings length mismatch!"
+
+    submission = pd.DataFrame({
+        "sample_id": test_df["sample_id"],
+        "price": preds
+    })
+
+    output_path = os.path.abspath(output_path)
+    submission.to_csv(output_path, index=False)
+    print(f"Predictions saved to {output_path}")
+    print(submission.head())
+
+    np.save("/outputs/test_predictions.npy", preds)
+    print("Saved raw predictions to test_predictions.npy")
+
+#Main Execution
+if __name__ == "__main__":
+    # Load embeddings
+    text_embeddings = np.load("Base_Model/outputs/X_test_text_structured.npy").astype(np.float32)
+    image_embeddings = np.load("Base_Model/outputs/test_image_embeddings_clip.npy").astype(np.float32)
+
+    # All trained model paths (from folds)
+    model_paths = [
+        "Base_Model/models/best_model_fold1.pth",
+        "Base_Model/models/best_model_fold2.pth",
+        "Base_Model/models/best_model_fold3.pth",
+        "Base_Model/models/best_model_fold4.pth",
+        "Base_Model/models/best_model_fold5.pth"
+    ]
+
+    evaluate_models(model_paths, text_embeddings, image_embeddings,
+                    batch_size=64,
+                    output_path="Base_Model/outputs/test_out.csv")
