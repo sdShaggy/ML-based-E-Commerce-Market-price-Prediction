@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
-from Combined_nn_create import MultiModalPricePredictor  # your model file
+from model_neural network import MultiModalPricePredictor  # your model file
 
 #Dataset for test
 class TestDataset(Dataset):
@@ -86,4 +86,5 @@ if __name__ == "__main__":
     evaluate_models(model_paths, text_embeddings, image_embeddings,
                     batch_size=64,
                     output_path="/outputs/test_out.csv")
+
 
