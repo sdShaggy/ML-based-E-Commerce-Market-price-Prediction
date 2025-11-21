@@ -52,7 +52,7 @@ def evaluate_models(model_paths, text_embeddings, image_embeddings, batch_size=6
     preds = np.clip(preds, 0, np.percentile(preds, 99.9))
 
     #Prepare submission
-    test_df = pd.read_csv("Base_Model/data/test.csv")
+    test_df = pd.read_csv("/dataset/test.csv")
     assert len(test_df) == len(preds), "Test CSV and embeddings length mismatch!"
 
     submission = pd.DataFrame({
@@ -71,18 +71,19 @@ def evaluate_models(model_paths, text_embeddings, image_embeddings, batch_size=6
 #Main Execution
 if __name__ == "__main__":
     # Load embeddings
-    text_embeddings = np.load("Base_Model/outputs/X_test_text_structured.npy").astype(np.float32)
-    image_embeddings = np.load("Base_Model/outputs/test_image_embeddings_clip.npy").astype(np.float32)
+    text_embeddings = np.load("/outputs/X_test_text_structured.npy").astype(np.float32)
+    image_embeddings = np.load("/outputs/test_image_embeddings_clip.npy").astype(np.float32)
 
     # All trained model paths (from folds)
     model_paths = [
-        "Base_Model/models/best_model_fold1.pth",
-        "Base_Model/models/best_model_fold2.pth",
-        "Base_Model/models/best_model_fold3.pth",
-        "Base_Model/models/best_model_fold4.pth",
-        "Base_Model/models/best_model_fold5.pth"
+        "/models/best_model_fold1.pth",
+        "/models/best_model_fold2.pth",
+        "/models/best_model_fold3.pth",
+        "/models/best_model_fold4.pth",
+        "/models/best_model_fold5.pth"
     ]
 
     evaluate_models(model_paths, text_embeddings, image_embeddings,
                     batch_size=64,
-                    output_path="Base_Model/outputs/test_out.csv")
+                    output_path="/outputs/test_out.csv")
+
