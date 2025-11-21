@@ -1,2 +1,3 @@
 This folder contains output csv file.
-It also contains all embeddings
+
+Other files like embeddings and codes are present in a drive link provided in Readme.
