@@ -80,6 +80,6 @@ if __name__ == "__main__":
     np.save("outputs/X_train_text_structured.npy", X_text)
 
     X_text_1 = create_embeddings_parallel(df_1, num_workers=8, model_name=model_name)
-     np.save("outputs/X_test_text_structured.npy", X_text)
+    np.save("outputs/X_test_text_structured.npy", X_text)
 
     print(f"Saved embeddings:{X_text.shape} and {X_text_1.shape}")
