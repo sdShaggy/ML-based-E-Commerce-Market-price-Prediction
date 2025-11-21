@@ -12,8 +12,8 @@ import clip  # OpenAI CLIP package
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #LOAD DATA
-train = pd.read_csv("Base_Model/data/train.csv")
-test = pd.read_csv("Base_Model/data/test.csv")
+train = pd.read_csv("/dataset/train.csv")
+test = pd.read_csv("/dataset/test.csv")
 print(f"Train shape: {train.shape}")
 print(train.head())
 
@@ -62,8 +62,9 @@ train_image_embeddings = process_image_column(train)
 test_image_embeddings = process_image_column(test)
 
 os.makedirs("outputs", exist_ok=True)
-np.save(os.path.join("Base_Model/outputs/train_image_embeddings_clip.npy"), train_image_embeddings)
-np.save(os.path.join("Base_Model/outputs/test_image_embeddings_clip.npy"), test_image_embeddings)
+np.save(os.path.join("/outputs/train_image_embeddings_clip.npy"), train_image_embeddings)
+np.save(os.path.join("/outputs/test_image_embeddings_clip.npy"), test_image_embeddings)
 print("Saved CLIP embeddings as train_image_embeddings_clip.npy")
 print("Embedding shape:", train_image_embeddings.shape)
+# Embeddings can be found in Drive link for code artefacts in Readme file.
 
