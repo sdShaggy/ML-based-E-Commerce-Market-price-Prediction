@@ -14,7 +14,7 @@ device = "cpu"
 print(f"Using device: {device} ({num_threads} threads)")
 
 #LOAD DATA
-df = pd.read_csv("Base_Model/data/test.csv")
+df = pd.read_csv("/dataset/test.csv")
 print(f"Dataset shape: {df.shape}")
 print(df.head())
 
