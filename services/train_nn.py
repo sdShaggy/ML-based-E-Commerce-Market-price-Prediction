@@ -6,7 +6,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, Subset
 from sklearn.model_selection import KFold
 import logging
-from Combined_nn_create import PriceDataset, MultiModalPricePredictor
+from model_neural network import PriceDataset, MultiModalPricePredictor
 
 #LOGGING
 logging.basicConfig(
@@ -147,4 +147,5 @@ if __name__ == "__main__":
     avg_smape = train_kfold(text_embeddings, image_embeddings, prices_log,
                             n_splits=5, batch_size=32, epochs=50)
     print(f"Final Average SMAPE: {avg_smape:.2f}")
+
 
