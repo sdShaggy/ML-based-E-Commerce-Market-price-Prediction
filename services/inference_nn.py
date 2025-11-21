@@ -85,6 +85,7 @@ if __name__ == "__main__":
 
     evaluate_models(model_paths, text_embeddings, image_embeddings,
                     batch_size=64,
-                    output_path="/outputs/test_out.csv")
+                    output_path="/outputs/output.csv")
+
 
 
