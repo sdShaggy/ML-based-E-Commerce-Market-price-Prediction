@@ -14,9 +14,11 @@ device = "cpu"
 print(f"Using device: {device} ({num_threads} threads)")
 
 #LOAD DATA
-df = pd.read_csv("/dataset/test.csv")
-print(f"Dataset shape: {df.shape}")
+df = pd.read_csv("/dataset/train.csv")
+df_1 = pd.read_csv("/dataset/test.csv")
+print(f"Dataset shapes: {df.shape} and {df_1.shape}")
 print(df.head())
+print(df_1.head())
 
 #PREPROCESSING (REGEX CLEANER)
 def extract_sections(text):
@@ -75,6 +77,9 @@ if __name__ == "__main__":
     model_name = "all-mpnet-base-v2"
 
     X_text = create_embeddings_parallel(df, num_workers=8, model_name=model_name)
-    np.save("outputs/X_test_text_structured.npy", X_text)
+    np.save("outputs/X_train_text_structured.npy", X_text)
 
-    print("Saved embeddings:", X_text.shape)
+    X_text_1 = create_embeddings_parallel(df_1, num_workers=8, model_name=model_name)
+     np.save("outputs/X_test_text_structured.npy", X_text)
+
+    print(f"Saved embeddings:{X_text.shape} and {X_text_1.shape}")
