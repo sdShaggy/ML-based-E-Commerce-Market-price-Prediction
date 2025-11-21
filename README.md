@@ -2,7 +2,7 @@
 
 **Team Name:** Synaptech 
 
-**Team Members:** Viraj Kumar, Amon Harsh, Ansh Arya, Sarvagya Dwivedi
+**Team Members:** Amon Harsh, Ansh Arya, Sarvagya Dwivedi, Viraj Kumar
 
 **Submission Date:** 13/10/25
 
@@ -156,7 +156,7 @@ Our model achieves competitive SMAPE performance through **transformer-based emb
 
 ## Appendix
 
-### A. Code Artefacts
+### A. Code Artifacts
 **Drive Link:** https://drive.google.com/drive/folders/1Dz4lepBcRw9dl0A8UJXgMtPwah6xhmev?usp=drive_link  
 *(Includes data preprocessing scripts, embedding generation notebooks, PyTorch training modules, and inference pipeline.)*
 
