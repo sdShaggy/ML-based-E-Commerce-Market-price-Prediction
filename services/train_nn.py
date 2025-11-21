@@ -10,7 +10,7 @@ from Combined_nn_create import PriceDataset, MultiModalPricePredictor
 
 #LOGGING
 logging.basicConfig(
-    filename="Base_Model/outputs/training.log",
+    filename="/outputs/training.log",
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S"
@@ -137,13 +137,14 @@ def train_kfold(text_embeddings, image_embeddings, prices, n_splits=5, batch_siz
 
 #MAIN
 if __name__ == "__main__":
-    text_embeddings = np.load("Base_Model/outputs/X_text_structured.npy").astype(np.float32)
-    image_embeddings = np.load("Base_Model/outputs/train_image_embeddings_clip.npy").astype(np.float32)
+    text_embeddings = np.load("/outputs/X_text_structured.npy").astype(np.float32)
+    image_embeddings = np.load("/outputs/train_image_embeddings_clip.npy").astype(np.float32)
 
-    train_df = pd.read_csv("Base_Model/data/train.csv")
+    train_df = pd.read_csv("/dataset/train.csv")
     prices_raw = train_df["price"].values.astype(np.float32)
     prices_log = np.log1p(prices_raw)
 
     avg_smape = train_kfold(text_embeddings, image_embeddings, prices_log,
                             n_splits=5, batch_size=32, epochs=50)
     print(f"Final Average SMAPE: {avg_smape:.2f}")
+
