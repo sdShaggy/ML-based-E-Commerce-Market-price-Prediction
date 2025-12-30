@@ -172,6 +172,6 @@ Released under the **MIT License** — free for use, modification, and distribut
 ---
 
 ## **Result:**
-  [Result-Amazon ML Challenge 2025](Result.jpeg)
+  ![Result-Amazon ML Challenge 2025](Result.jpeg)
 
 
