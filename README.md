@@ -171,4 +171,7 @@ Released under the **MIT License** — free for use, modification, and distribut
 
 ---
 
+## **Result:*
+  [Result-Amazon ML Challenge 2025](https://github.com/sdShaggy/ML-based-E-Commerce-Market-price-Prediction/blob/main/Result.jpeg)
+
 
