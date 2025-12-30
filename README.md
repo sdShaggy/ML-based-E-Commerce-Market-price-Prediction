@@ -139,7 +139,7 @@ The model integrates two embedding generators — sentence-transformers/all-mpne
 ### 4.1 Validation Results
 | Metric | Value |
 |:-------|:------|
-| **SMAPE Score** | 47.60 |
+| **SMAPE Score** | 45.02 |
 | **MSE LOSS** | 0.1313 |
 
 
